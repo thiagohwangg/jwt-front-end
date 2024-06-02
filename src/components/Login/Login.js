@@ -5,14 +5,14 @@ const Login = (props) => {
     <div className="login-container mt-3">
       <div className="container">
         <div className="row">
-          <div className="content-left col-md-7">
+          <div className="content-left col-7 d-none d-md-block">
             <div className="brand">Hoi dan it</div>
             <div className="detail">
               Thien Hoang helps you connect and share with the people in your
               life.
             </div>
           </div>
-          <div className="content-right col-md-5 green d-flex flex-column gap-3 py-3">
+          <div className="content-right col-12 col-sm-5 green d-flex flex-column gap-3 py-3">
             <input
               className="form-control"
               placeholder="Email address or phone number"
