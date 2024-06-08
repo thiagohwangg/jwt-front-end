@@ -1,10 +1,38 @@
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import "./Login.scss";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import {loginUser} from "../../services/userService"
 
 const Login = (props) => {
   const history = useHistory();
+  const [valueLogin, setValueLogin] = useState("")
+  const [password, setPassword] = useState("")
+  const defaultObjValidInput = {
+    isValidValueLogin: true,
+    isValidValuePassword: true
+  }
+  const [objValidInput, setObjValidInput] = useState(defaultObjValidInput)
+
   const handleCreateNewAccount = () => {
     history.push('/register')
+  }
+
+  const handleLogin = async() => {
+    setObjValidInput(defaultObjValidInput)
+    if(!valueLogin) {
+      setObjValidInput({...defaultObjValidInput, isValidValueLogin: false})
+      toast.error('Please enter your email address or phone number')
+      return;
+    }
+
+    if(!password) {
+      setObjValidInput({...defaultObjValidInput, isValidValuePassword: false})
+      toast.error('Please enter your password')
+      return;
+    }
+
+    await loginUser(valueLogin, password)
   }
   return (
     <div className="login-container">
@@ -21,16 +49,20 @@ const Login = (props) => {
           <div className="brand d-sm-none">Hoi dan it</div>
             
             <input
-              className="form-control"
+            value={valueLogin}
+            onChange={(e) => setValueLogin(e.target.value)}
+              className={objValidInput.isValidValueLogin ? "form-control" : "form-control is-invalid"}
               placeholder="Email address or phone number"
               type="text"
             />
             <input
-              className="form-control"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={objValidInput.isValidValuePassword ? "form-control" : "form-control is-invalid"}
               placeholder="Password"
               type="password"
             />
-            <button className="btn btn-primary">Login</button>
+            <button className="btn btn-primary" onClick={handleLogin}>Login</button>
             <span className="text-center">
               <a href="#" className="forgot-password">
                 Forgot your password?
