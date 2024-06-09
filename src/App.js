@@ -11,7 +11,6 @@ import _ from "lodash";
 
 function App() {
   const [account, setAccount] = useState({})
-  console.log("account: ", account);
 
   useEffect(() => {
    let session = JSON.parse(sessionStorage.getItem('account'))
