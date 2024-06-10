@@ -1,6 +1,6 @@
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import "./Login.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {loginUser} from "../../services/userService"
 
@@ -17,6 +17,14 @@ const Login = (props) => {
   const handleCreateNewAccount = () => {
     history.push('/register')
   }
+
+  useEffect(() => {
+    let session = JSON.parse(sessionStorage.getItem('account'))
+        if(session) {
+            history.push('/')
+            window.location.reload()
+        }
+  }, [])
 
   const handleLogin = async() => {
     setObjValidInput(defaultObjValidInput)
