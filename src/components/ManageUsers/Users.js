@@ -1,21 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { fetchAllUser } from "../../services/userService";
+import ReactPaginate from "react-paginate";
+import { fetchAllUser, fetchUser } from "../../services/userService";
 import "./Users.scss";
 
 const Users = (props) => {
   const [listUser, setListUser] = useState([]);
-  console.log("listUser: ", listUser);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentLimit, setCurrentLimit] = useState(3);
+  const [totalPages, setTotalPages] = useState(0)
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [currentPage]);
 
   const fetchUsers = async () => {
-    let response = await fetchAllUser();
+    let response = await fetchAllUser(currentPage, currentLimit);
     if (response?.data.EC === 0) {
-      setListUser(response.data.DT);
+      console.log("response?.data: ", response?.data);
+      
+      setTotalPages(response.data.DT.totalPages)
+      setListUser(response.data.DT.users);
     }
   };
+
+  const handlePageClick = async(event) => {
+    setCurrentPage(+event.selected + 1)
+    await fetchUsers(+event.selected + 1)
+  };
+
   return (
     <div className="container">
       <div className="manage-user-container">
@@ -29,7 +41,7 @@ const Users = (props) => {
           </div>
         </div>
         <div className="user-body">
-          <table class="table table-bordered table-hover">
+          <table className="table table-bordered table-hover">
             <thead>
               <tr>
                 <th scope="col">No</th>
@@ -40,7 +52,7 @@ const Users = (props) => {
               </tr>
             </thead>
             <tbody>
-              {listUser ? (
+              {listUser && listUser.length > 0 ? (
                 listUser.map((item, index) => {
                   return (
                     <tr key={`row-${index}`}>
@@ -49,48 +61,46 @@ const Users = (props) => {
                       <td>{item.email}</td>
                       <td>{item.username}</td>
                       <td>{item.Group ? item.Group.name : ""}</td>
+                      <td>
+                        <button className="btn btn-warning me-3">Edit</button>
+                        <button className="btn btn-danger">Delete</button>
+                      </td>
                     </tr>
                   );
                 })
               ) : (
                 <>
-                  <span>Not found users</span>
+                  <tr><td>Not found users</td></tr>
                 </>
               )}
             </tbody>
           </table>
         </div>
-        <div className="user-footer">
-          <nav aria-label="Page navigation example">
-            <ul class="pagination">
-              <li class="page-item">
-                <a class="page-link" href="#">
-                  Previous
-                </a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">
-                  1
-                </a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">
-                  2
-                </a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">
-                  3
-                </a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">
-                  Next
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
+        {totalPages > 0 && (
+          <div className="user-footer">
+          <ReactPaginate
+          nextLabel="next >"
+          onPageChange={handlePageClick}
+          pageRangeDisplayed={3}
+          marginPagesDisplayed={2}
+          pageCount={totalPages}
+          previousLabel="< previous"
+          pageClassName="page-item"
+          pageLinkClassName="page-link"
+          previousClassName="page-item"
+          previousLinkClassName="page-link"
+          nextClassName="page-item"
+          nextLinkClassName="page-link"
+          breakLabel="..."
+          breakClassName="page-item"
+          breakLinkClassName="page-link"
+          containerClassName="pagination"
+          activeClassName="active"
+          renderOnZeroPageCount={null}
+        />
+          </div>
+        )}
+        
       </div>
     </div>
   );
