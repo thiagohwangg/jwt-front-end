@@ -22,4 +22,8 @@ const fetchAllUser = (page, limit) => {
   .get(`http://localhost:8080/api/v1/users/read?page=${page}&limit=${limit}`)
 }
 
-export { registerNewUser, loginUser, fetchAllUser };
+const deleteUser = (user) => {
+return axios.delete('http://localhost:8080/api/v1/users/delete', {data: {id: user.id}})
+}
+
+export { registerNewUser, loginUser, fetchAllUser, deleteUser };

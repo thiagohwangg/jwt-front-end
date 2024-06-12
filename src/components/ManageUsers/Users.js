@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
-import { fetchAllUser, fetchUser } from "../../services/userService";
+import { toast } from "react-toastify";
+import { deleteUser, fetchAllUser } from "../../services/userService";
+import ModalDelete from "./ModalDelete";
 import "./Users.scss";
 
 const Users = (props) => {
   const [listUser, setListUser] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLimit, setCurrentLimit] = useState(3);
-  const [totalPages, setTotalPages] = useState(0)
+  const [totalPages, setTotalPages] = useState(0);
+
+
+  const [isShoModalDelete, setIsShowModalDelete] = useState(false);
+  const [dataModal, setDataModal] = useState({})
 
   useEffect(() => {
     fetchUsers();
@@ -16,8 +22,6 @@ const Users = (props) => {
   const fetchUsers = async () => {
     let response = await fetchAllUser(currentPage, currentLimit);
     if (response?.data.EC === 0) {
-      console.log("response?.data: ", response?.data);
-      
       setTotalPages(response.data.DT.totalPages)
       setListUser(response.data.DT.users);
     }
@@ -25,11 +29,33 @@ const Users = (props) => {
 
   const handlePageClick = async(event) => {
     setCurrentPage(+event.selected + 1)
-    await fetchUsers(+event.selected + 1)
   };
 
+  const handleDeleteUser = async(user) => {
+    setDataModal(user)
+    setIsShowModalDelete(true)
+  }
+
+  const handleClose = () => {
+    setIsShowModalDelete(false)
+    setDataModal({})
+}
+
+const confirmDeleteUser = async() => {
+ let response =  await deleteUser(dataModal)
+   if(response?.data.EC === 0) {
+    toast.success(response.data.EM)
+    setIsShowModalDelete(false)
+    await fetchUsers()
+   } else {
+    toast.error(response.data.EM)
+    setIsShowModalDelete(false)
+   }
+}
+
   return (
-    <div className="container">
+    <>
+      <div className="container">
       <div className="manage-user-container">
         <div className="user-header">
           <div className="title">
@@ -49,6 +75,7 @@ const Users = (props) => {
                 <th scope="col">Email</th>
                 <th scope="col">Username</th>
                 <th scope="col">Group</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -63,7 +90,7 @@ const Users = (props) => {
                       <td>{item.Group ? item.Group.name : ""}</td>
                       <td>
                         <button className="btn btn-warning me-3">Edit</button>
-                        <button className="btn btn-danger">Delete</button>
+                        <button className="btn btn-danger" onClick={() => handleDeleteUser(item)}>Delete</button>
                       </td>
                     </tr>
                   );
@@ -103,6 +130,9 @@ const Users = (props) => {
         
       </div>
     </div>
+    <ModalDelete show={isShoModalDelete} handleClose={handleClose} confirmDeleteUser={confirmDeleteUser} dataModal={dataModal} />
+    </>
+    
   );
 };
 
