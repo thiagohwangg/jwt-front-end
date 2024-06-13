@@ -16,6 +16,9 @@ const Users = (props) => {
   const [isShoModalDelete, setIsShowModalDelete] = useState(false);
   const [dataModal, setDataModal] = useState({})
 
+  const [isShowModalUser, setIsShowModalUser] = useState(false);
+
+
   useEffect(() => {
     fetchUsers();
   }, [currentPage]);
@@ -54,6 +57,10 @@ const confirmDeleteUser = async() => {
    }
 }
 
+const onHideModalUser = () => {
+  setIsShowModalUser(false)
+}
+
   return (
     <>
       <div className="container">
@@ -64,7 +71,7 @@ const confirmDeleteUser = async() => {
           </div>
           <div className="actions">
             <button className="btn btn-success">Refresh</button>
-            <button className="btn btn-primary">Add new user</button>
+            <button className="btn btn-primary" onClick={() => setIsShowModalUser(true)}>Add new user</button>
           </div>
         </div>
         <div className="user-body">
@@ -132,7 +139,7 @@ const confirmDeleteUser = async() => {
       </div>
     </div>
     <ModalDelete show={isShoModalDelete} handleClose={handleClose} confirmDeleteUser={confirmDeleteUser} dataModal={dataModal} />
-    <ModalUser title={"Create new user"} />
+    <ModalUser title={"Create new user"} onHide={onHideModalUser} show={isShowModalUser} />
     </>
     
   );
