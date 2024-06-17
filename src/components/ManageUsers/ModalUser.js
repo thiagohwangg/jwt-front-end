@@ -1,5 +1,5 @@
 import { Button, Modal } from "react-bootstrap";
-import { fetchGroup, createNewUser } from "../../services/userService";
+import { fetchGroup, createNewUser, updateCurrentUser} from "../../services/userService";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import _ from "lodash";
@@ -67,6 +67,7 @@ const ModalUser = ({ action, show, onHide, dataModalUser }) => {
 
   const checkValidateInputs = () => {
     // create user
+    if(action === 'UPDATE') return true;
     setValidInputs(validInputDefault);
     let arr = ["email", "phone", "password", "group"];
     let check = true;
@@ -88,7 +89,10 @@ const ModalUser = ({ action, show, onHide, dataModalUser }) => {
     // create user
     let check = checkValidateInputs();
     if (check) {
-      let response = await createNewUser({
+      let response = action === 'CREATE' ? await createNewUser({
+        ...userData,
+        groupId: userData["group"],
+      }) : await updateCurrentUser({
         ...userData,
         groupId: userData["group"],
       });
