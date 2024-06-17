@@ -53,9 +53,9 @@ const Login = (props) => {
     window.location.reload();
    }
 
-   if(+response?.data?.EC !== 0) {
+   if(+response?.EC !== 0) {
     // failed
-    toast.error(response.data.EM)
+    toast.error(response.EM)
    }
   }
 
