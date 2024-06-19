@@ -41,8 +41,7 @@ const Login = (props) => {
     }
 
    let response = await loginUser(valueLogin, password)
-   console.log("response: ", response.data);
-   if(+response?.data?.EC === 0) {
+   if(+response.EC === 0) {
     // success
     let data = {
       isAuthenticated: true,
