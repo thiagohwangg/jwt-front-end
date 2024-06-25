@@ -21,13 +21,6 @@ const Login = (props) => {
     history.push('/register')
   }
 
-  useEffect(() => {
-    let session = JSON.parse(sessionStorage.getItem('account'))
-        if(session) {
-            history.push('/')
-            window.location.reload()
-        }
-  }, [])
 
   const handleLogin = async() => {
     setObjValidInput(defaultObjValidInput)
@@ -55,7 +48,6 @@ const Login = (props) => {
       token,
       account: {groupWithRoles, email, username}
     }
-    sessionStorage.setItem('account', JSON.stringify(data))
     loginContext(data)
 
     history.push('/users')
