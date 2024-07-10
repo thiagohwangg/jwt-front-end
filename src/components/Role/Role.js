@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import { v4 as uuidv4 } from "uuid";
 import "./Role.scss";
 import { toast } from "react-toastify";
-import {createRoles} from "../../services/roleService"
+import { createRoles } from "../../services/roleService";
+import TableRole from "./TableRole";
 const Role = () => {
   const dataChildDefault = { url: "", description: "", isValidUrl: true };
   const [listChild, setListChild] = useState({
     child1: dataChildDefault,
   });
+
+  const childRef = useRef();
 
   const handleOnChangeInput = (name, value, key) => {
     let _listChild = _.cloneDeep(listChild);
@@ -38,26 +41,27 @@ const Role = () => {
     Object.entries(listChild).find(([key, child], index) => {
       result.push({
         url: child.url,
-        description: child.description
-      })
+        description: child.description,
+      });
     });
-    return result
-  }
+    return result;
+  };
 
-  const handleSave = async() => {
+  const handleSave = async () => {
     let invalidObj = Object.entries(listChild).find(([key, child], index) => {
       return child && !child.url;
     });
     if (!invalidObj) {
       // call api
-      let data= buildDataToPersist()
-      let res = await createRoles(data)
-      if(res?.EC === 0) {
-        toast.success(res?.EM)
+      let data = buildDataToPersist();
+      let res = await createRoles(data);
+      if (res?.EC === 0) {
+        toast.success(res?.EM);
+        childRef.current.fetchListRolesAgain();
       }
     } else {
       //err
-      toast.error("Input URL must not be empty..")
+      toast.error("Input URL must not be empty..");
       let _listChild = _.cloneDeep(listChild);
       const key = invalidObj[0];
       _listChild[key]["isValidUrl"] = false;
@@ -68,7 +72,7 @@ const Role = () => {
   return (
     <div className="role-container">
       <div className="container">
-        <div className="mt-3">
+        <div className="adding-roles mt-3">
           <div className="title-role">
             <h4>Add a new role...</h4>
           </div>
@@ -126,6 +130,11 @@ const Role = () => {
               </button>
             </div>
           </div>
+        </div>
+        <hr />
+        <div className="mt-3 table-role">
+          <h4>List Currents Roles</h4>
+        <TableRole ref={childRef} />
         </div>
       </div>
     </div>
