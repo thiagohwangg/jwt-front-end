@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import "./GroupRole.scss";
 import { fetchGroup } from "../../services/userService";
 import { toast } from "react-toastify";
-import { fetchAllRole, fetchRolesByGroup } from "../../services/roleService";
+import {
+  assignRoleToGroup,
+  fetchAllRole,
+  fetchRolesByGroup,
+} from "../../services/roleService";
 import _ from "lodash";
 
 const GroupRole = () => {
@@ -40,8 +44,8 @@ const GroupRole = () => {
     if (value) {
       let data = await fetchRolesByGroup(value);
       if (+data?.EC === 0) {
-        let result = buildDataRolesByGroup(data.DT.Roles, listRoles)
-        setAssignRolesByGroup(result)
+        let result = buildDataRolesByGroup(data.DT.Roles, listRoles);
+        setAssignRolesByGroup(result);
       }
     }
   };
@@ -68,12 +72,40 @@ const GroupRole = () => {
 
   const handleSelectRole = (value) => {
     const _assignRolesByGroup = _.cloneDeep(assignRolesByGroup);
-    let foundIndex = _assignRolesByGroup.findIndex(item => +item.id === +value)
-    if(foundIndex > -1) {
-      _assignRolesByGroup[foundIndex].isAssigned = !_assignRolesByGroup[foundIndex].isAssigned
+    let foundIndex = _assignRolesByGroup.findIndex(
+      (item) => +item.id === +value
+    );
+    if (foundIndex > -1) {
+      _assignRolesByGroup[foundIndex].isAssigned =
+        !_assignRolesByGroup[foundIndex].isAssigned;
     }
-    setAssignRolesByGroup(_assignRolesByGroup)
-  }
+    setAssignRolesByGroup(_assignRolesByGroup);
+  };
+
+  const buildDataToSave = () => {
+    let result = {};
+    const _assignRolesByGroup = _.cloneDeep(assignRolesByGroup);
+    result.groupId = selectGroup;
+    let groupRolesFilter = _assignRolesByGroup.filter(
+      (item) => item.isAssigned === true
+    );
+   let finalGroupRoles =  groupRolesFilter.map(item => {
+     let data = {groupId: +selectGroup, roleId: item.id}
+     return data
+    })
+    result.groupRoles = finalGroupRoles;
+    return result;
+  };
+
+  const handleSave = async() => {
+    let data = buildDataToSave();
+    let res = await assignRoleToGroup(data)
+    if(res?.EC === 0) {
+      toast.success(res.EM)
+    } else {
+      toast.error(res.EM)
+    }
+  };
 
   return (
     <div className="group-role-container">
@@ -125,11 +157,13 @@ const GroupRole = () => {
                     </div>
                   );
                 })}
+              <div className="mt-3">
+                <button className="btn btn-warning" onClick={handleSave}>
+                  Save
+                </button>
+              </div>
             </div>
           )}
-          <div className="mt-3">
-            <button className="btn btn-warning">Save</button>
-          </div>
         </div>
       </div>
     </div>
