@@ -1,10 +1,13 @@
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import "./Register.scss";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {registerNewUser} from "../../services/userService"
+import { UserContext } from "../../context/UserContext";
 
 const Register = (props) => {
+  const {user} = useContext(UserContext);
+
   const history = useHistory();
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -18,6 +21,12 @@ const Register = (props) => {
     isValidConfirmPassword: true,
   };
   const [objCheckInput, setObjCheckInput] = useState(defaultValidInput);
+  
+  useEffect(() => {
+    if(user && user.isAuthenticated) {
+      history.push('/')
+    }
+}, [user])
   const handleLogin = () => {
     history.push("/login");
   };

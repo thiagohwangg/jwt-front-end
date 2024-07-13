@@ -11,6 +11,10 @@
       text-transform: uppercase;
       font-size: 30px;
       color: #1877f2;
+
+      a {
+        text-decoration: none;
+      }
     }
 
     .detail {
@@ -39,6 +43,16 @@
           text-decoration: underline;
 
         }
+    }
+
+    .return {
+      a {
+        text-decoration: none;
+      }
+
+      span {
+        padding-left: 7px;
+      }
     }
   }
 }

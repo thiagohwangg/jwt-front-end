@@ -27,7 +27,7 @@ const NavHeader = (props) => {
       toast.error(data?.EM)
     }
   };
-  if (user.isAuthenticated || location.pathname === "/") {
+  if (user.isAuthenticated || location.pathname === "/" || location.pathname === "/about") {
     return (
       <>
         <div className="nav-header">

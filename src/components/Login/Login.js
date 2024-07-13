@@ -4,9 +4,11 @@ import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {loginUser} from "../../services/userService"
 import { UserContext } from "../../context/UserContext";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const Login = (props) => {
-  const {loginContext} = useContext(UserContext);
+  const {user,loginContext} = useContext(UserContext);
+  console.log("user: ", user);
 
   const history = useHistory();
   const [valueLogin, setValueLogin] = useState("")
@@ -17,6 +19,7 @@ const Login = (props) => {
   }
   const [objValidInput, setObjValidInput] = useState(defaultObjValidInput)
 
+  
   const handleCreateNewAccount = () => {
     history.push('/register')
   }
@@ -66,12 +69,20 @@ const Login = (props) => {
       handleLogin()
     }
   }
+
+  useEffect(() => {
+    if(user && user.isAuthenticated) {
+      history.push('/')
+    }
+}, [user])
   return (
     <div className="login-container">
       <div className="container">
         <div className="row px-3 px-sm-0">
           <div className="content-left col-12 d-none col-sm-7 d-sm-block">
-            <div className="brand">Hoi dan it</div>
+            <div className="brand">
+              <Link to="/">Hoi dan it</Link>
+            </div>
             <div className="detail">
               Thien Hoang helps you connect and share with the people in your
               life.
@@ -104,6 +115,12 @@ const Login = (props) => {
             <br />
             <div className="text-center">
               <button className="btn btn-success" onClick={handleCreateNewAccount}>Create new account</button>
+              <div className="mt-3 return">
+                <Link to="/">
+                <i className="fa fa-arrow-circle-left"></i>
+                <span title="Return to HomePage">Return to HomePage</span>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

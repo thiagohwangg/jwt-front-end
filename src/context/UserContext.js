@@ -11,11 +11,12 @@ const UserProvider = ({ children }) => {
   const [user, setUser] = useState(userDefault);
 
   useEffect(() => {
-    if(window.location.pathname !== '/' && window.location.pathname !== '/login') {
-      fetchUser()
-    } else {
-      setUser({...user, isLoading: false})
-    }
+    // if(window.location.pathname !== '/' && window.location.pathname !== '/login') {
+    //   fetchUser()
+    // } else {
+    //   setUser({...user, isLoading: false})
+    // }
+    fetchUser()
   }, [])
 
   // Login updates the user data with a name parameter
